@@ -65,6 +65,9 @@ Current version: 0.1
 📧 dfirvault@gmail.com
 [https://www.linkedin.com/in/jacob--wilson/](https://www.linkedin.com/in/jacob--wilson/)
 
+**More information:**
+[https://dfirvault.com](https://dfirvault.com)
+
 ## Notes
 
 - For UNC paths, the drive identifier will show as "UNC"
