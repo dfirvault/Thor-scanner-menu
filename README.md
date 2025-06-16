@@ -59,11 +59,11 @@ The script executes THOR with these recommended parameters:
 
 Current version: 0.1
 
-## Author
+## 👤 Author
 
-Jacob Wilson  
-DFIR Vault  
-dfirvault@gmail.com
+**Jacob Wilson**  
+📧 dfirvault@gmail.com
+[https://www.linkedin.com/in/jacob--wilson/](https://www.linkedin.com/in/jacob--wilson/)
 
 ## Notes
 
