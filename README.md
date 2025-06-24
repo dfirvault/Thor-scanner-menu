@@ -1,6 +1,8 @@
 # THOR Drive Scanner
 
 A batch script utility for running THOR (Threat Hunting and Incident Response) scans on mounted drives with automated report generation.
+![image](https://github.com/user-attachments/assets/27333594-27f8-4c74-9cda-a9cebc11695e)
+
 
 ## Features
 
