@@ -57,6 +57,19 @@ if not exist "!THOR_PATH!" (
     echo Current directory: %CD%
     dir /b thor*.exe
     set /p "THOR_PATH=Enter full path to Thor executable: "
+    
+    :: Check if user entered a directory path and append thor64-lite.exe if needed
+    if exist "!THOR_PATH!\" (
+        set "THOR_PATH=!THOR_PATH!\thor64-lite.exe"
+    ) else (
+        :: Check if path ends with backslash (user might have typed it)
+        for /f "delims=" %%P in ("!THOR_PATH!") do (
+            if "%%~pP"=="\" (
+                set "THOR_PATH=!THOR_PATH!thor64-lite.exe"
+            )
+        )
+    )
+    
     if not exist "!THOR_PATH!" goto CHECK_THOR
     
     :: Save valid path
