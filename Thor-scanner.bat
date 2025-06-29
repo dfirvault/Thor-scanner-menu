@@ -196,7 +196,7 @@ for /l %%i in (1,1,!scanCount!) do (
 :: PERFORMANCE OPTION
 :: ==============================================
 echo.
-set /p "performanceMode=Use all threads for maximum performance? (y/n)"
+set /p "performanceMode=Use all threads for maximum performance? (y/n): "
 set "threadOption="
 if /i "!performanceMode!"=="y" set "threadOption=--threads 0"
 
