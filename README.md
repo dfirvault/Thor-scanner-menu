@@ -1,65 +1,72 @@
-# THOR Drive Scanner
+# THOR Drive Scanner 
 
-A batch script utility for running THOR (Threat Hunting and Incident Response) scans on mounted drives with automated report generation.
+A batch script utility for running THOR scans on single or multiple drives with automated reporting.
+
 ![image](https://github.com/user-attachments/assets/27333594-27f8-4c74-9cda-a9cebc11695e)
 
+## ✨ New in Version 2.0
+- **Multi-drive scanning**: Select multiple drives (e.g., `1,3,5`)
+- **Signature updates**: Auto-updates THOR signatures before scanning
+- **Per-drive case names**: Unique identifiers for each scanned drive
+- **Performance mode**: Optional `--threads 0` for max CPU utilization
+- **Improved input handling**: Supports spaced or compact formats (`1,2` or `1, 2`)
+- **Create and automatically maintain a config file that points to the Thor location and is validated on each execution
 
 ## Features
 
-- Lists all mounted drives with their labels and sizes
-- Validates THOR executable path (with fallback to user input)
-- Creates organized output directory structure
+- Lists mounted drives with labels/sizes  
+- Validates THOR executable path (with fallback prompt)  
+- **New**: Sequential multi-drive scanning  
+- Creates organized output directory  
 - Generates standardized filenames with:
-  - Date stamp (YYYYMMDD)
-  - Case name
-  - Drive identifier
+  - Date stamp (YYYYMMDD)  
+  - Custom case name  
+  - Drive identifier  
 - Produces three output formats:
-  - CSV file with file hashes
-  - HTML report
-  - Text log
-- Opens results folder upon completion
+  - CSV (file hashes)  
+  - HTML report  
+  - Text log  
+- Opens results folder upon completion  
 
 ## Requirements
 
-- Windows system with mounted drives
-- [THOR Lite](https://www.nextron-systems.com/thor-lite/) installed (default path: `C:\Tools\Thor\thor64-lite.exe`)
-- Administrative privileges recommended
+- Windows 10/11 with mounted drives  
+- [THOR Lite](https://www.nextron-systems.com/thor-lite/) (tested with v10.7+)  
+- Administrative privileges  
 
 ## Usage
 
-1. Run the batch file as Administrator
-2. Select a drive from the displayed list by entering its number
-3. Specify an output directory for reports
-4. Enter a case name (used in report filenames)
-5. The scan will begin automatically
-6. Results folder will open when complete
+1. Run as Administrator  
+2. Select drives (single number or comma-separated list)  
+3. Specify output directory  
+4. **New**: Enter unique case name for each drive  
+5. Choose performance mode (optional)  
+6. Scans run sequentially  
+7. Results folder opens automatically  
 
 ## Output Files
-
-The tool generates three files per scan with standardized naming:
 YYYYMMDD-CaseName-drive(X)_files_md5s.csv
 YYYYMMDD-CaseName-drive(X)_thor_scan.html
 YYYYMMDD-CaseName-drive(X)_thor_log.txt
 
+Where:  
+- `YYYYMMDD` = Scan date  
+- `CaseName` = User-provided identifier  
+- `X` = Drive letter  
 
-Where:
-- `YYYYMMDD` = Current date
-- `CaseName` = User-provided case identifier
-- `X` = Drive letter being scanned
+## Command Parameters
 
-## Command Line Parameters
-
-The script executes THOR with these recommended parameters:
--a Filescan
---intense --norescontrol --nosoft --cross-platform
---rebase-dir [output path]
---alldrives
--p [selected drive]
-
+THOR executes with these optimized settings:  
+  -a Filescan  
+  --intense --norescontrol --nosoft --cross-platform  
+  --rebase-dir [output path]  
+  --alldrives  
+  -p [selected drive]  
+  [--threads 0 if performance mode enabled]  
 
 ## Version
 
-Current version: 0.1
+Current version: 0.2
 
 ## 👤 Author
 
@@ -70,8 +77,8 @@ Current version: 0.1
 **More information:**
 [https://dfirvault.com](https://dfirvault.com)
 
-## Notes
-
-- For UNC paths, the drive identifier will show as "UNC"
-- The script will create the output directory if it doesn't exist
-- THOR path is configurable during runtime if not found at default location
+** Key improvements in latest version **
+1. Added multi threaded support (Thank you Florian for the suggestion)
+2. Simplified usage instructions
+3. Added multi-drive selection
+4. Added automated local config file managment
