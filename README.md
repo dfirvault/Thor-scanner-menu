@@ -2,7 +2,8 @@
 
 A batch script utility for running THOR scans on single or multiple drives with automated reporting.
 
-![image](https://github.com/user-attachments/assets/27333594-27f8-4c74-9cda-a9cebc11695e)
+![image](https://github.com/user-attachments/assets/000c818f-7925-4b46-8dcc-d40b7ba31e18)
+
 
 ## ✨ New in Version 2.0
 - **Multi-drive scanning**: Select multiple drives (e.g., `1,3,5`)
