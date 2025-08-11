@@ -1,11 +1,14 @@
 # THOR Drive Scanner 
 
 A batch script utility for running THOR scans on single or multiple drives with automated reporting.
+![WindowsSandboxRemoteSession_vvaI1aFYwJ](https://github.com/user-attachments/assets/6c8b3cf5-b5ca-4220-bd56-8526c90b64a5)
 
-![image](https://github.com/user-attachments/assets/000c818f-7925-4b46-8dcc-d40b7ba31e18)
+## ✨ New in Version 0.3
+- **Python-based**: Recreated the batch file in python
+- **Stand-alone .exe binary**: Compile python to exe version for a single double-click solution
+- **UAC Escalation**: if you didn't open the scanner as admin, it will check and prompt a UAC to elevate.
 
-
-## ✨ New in Version 2.0
+## ✨ New in Version 0.2
 - **Multi-drive scanning**: Select multiple drives (e.g., `1,3,5`)
 - **Signature updates**: Auto-updates THOR signatures before scanning
 - **Per-drive case names**: Unique identifiers for each scanned drive
