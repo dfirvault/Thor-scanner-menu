@@ -1,6 +1,6 @@
 # THOR Drive Scanner 
 
-A batch script utility for running THOR scans on single or multiple drives with automated reporting.
+A Python and .exe binary utility for running THOR scans on single or multiple drives with automated reporting.
 
 <img width="959" height="415" alt="image" src="https://github.com/user-attachments/assets/366aa054-3b9b-43d2-b140-dddd802a7275" />
 
