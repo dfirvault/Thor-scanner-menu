@@ -98,7 +98,7 @@ def main():
     # ==============================================
     # INITIALIZATION
     # ==============================================
-    print("\nDeveloped by Jacob Wilson - Version 0.3")
+    print("\nDeveloped by Jacob Wilson - Version 0.4")
     print("dfirvault@gmail.com\n")
 
     # ==============================================
@@ -196,15 +196,16 @@ def main():
         print("    Available Drives to Scan")
         print("===============================\n")
 
-        # Build drive list
+        # Build drive list - NOW INCLUDES EMULATED/REMOVABLE DRIVES
         drives = get_available_drives()
         if not drives:
             print("No available drives found!")
             input("Press Enter to exit...")
             return 1
 
-        for i, (drive, label, size) in enumerate(drives, 1):
-            print(f"[Option {i}] Drive {drive}")
+        for i, (drive, label, size, drive_type) in enumerate(drives, 1):
+            type_desc = get_drive_type_description(drive_type)
+            print(f"[Option {i}] Drive {drive} - {type_desc}")
 
         print("\n==============================================")
         print("SELECTION INSTRUCTIONS:")
@@ -368,49 +369,87 @@ def is_process_running(process_name):
     except:
         return False
 
+def get_drive_type_description(drive_type):
+    """Convert drive type number to descriptive string"""
+    drive_types = {
+        0: "Unknown",
+        1: "No Root Directory",
+        2: "Removable",  # USB drives, floppy disks
+        3: "Fixed",      # Hard drives
+        4: "Remote",     # Network drives
+        5: "CD-ROM",
+        6: "RAM disk"
+    }
+    return drive_types.get(drive_type, f"Type {drive_type}")
+
 def get_available_drives():
+    """Get all available drives including emulated/removable drives"""
     drives = []
     if platform.system() == 'Windows':
         try:
-            # Method 1: Using psutil (more reliable if installed)
+            # Method 1: Using WMIC (most comprehensive for drive types)
+            try:
+                output = subprocess.check_output(
+                    'wmic logicaldisk get DeviceID,VolumeName,Size,DriveType /format:csv',
+                    stderr=subprocess.DEVNULL,
+                    universal_newlines=True,
+                    shell=True
+                )
+                
+                # Parse CSV output - we want ALL drive types including removable (2)
+                for line in output.splitlines()[1:]:  # Skip header
+                    parts = line.strip().split(',')
+                    if len(parts) >= 5:
+                        device = parts[1]  # DeviceID is in second column
+                        label = parts[2] if len(parts) > 2 else ""
+                        size = parts[3] if len(parts) > 3 else "0"
+                        drive_type = int(parts[4]) if len(parts) > 4 and parts[4].isdigit() else 0
+                        
+                        # Include ALL drive types including removable (2), fixed (3), etc.
+                        if device and device.endswith(':'):
+                            drives.append((device, label, size, drive_type))
+                
+                if drives:
+                    return drives
+            except Exception as e:
+                print(f"WMIC method failed: {e}")
+                pass  # WMIC failed, fall back to next method
+
+            # Method 2: Using psutil (alternative method)
             try:
                 import psutil
                 for partition in psutil.disk_partitions():
-                    if 'fixed' in partition.opts.lower() and partition.device:
+                    if partition.device:
                         drive = partition.device.split('\\')[0]
                         try:
                             usage = psutil.disk_usage(partition.mountpoint)
                             size = str(usage.total)
                         except:
                             size = "0"
-                        drives.append((drive, partition.mountpoint, size))
-                return drives
-            except ImportError:
-                pass  # psutil not available, fall back to other methods
-
-            # Method 2: Using WMIC
-            try:
-                output = subprocess.check_output(
-                    'wmic logicaldisk get DeviceID,VolumeName,Size,DriveType',
-                    stderr=subprocess.DEVNULL,
-                    universal_newlines=True,
-                    shell=True
-                )
-                
-                # Parse output - we only want fixed drives (DriveType=3)
-                for line in output.splitlines():
-                    parts = re.split(r'\s{2,}', line.strip())
-                    if len(parts) >= 4 and parts[3] == '3':  # Fixed drive
-                        device = parts[0]
-                        label = parts[1] if len(parts) > 1 else ""
-                        size = parts[2] if len(parts) > 2 else "0"
-                        drives.append((device, label, size))
+                        
+                        # Determine drive type from options
+                        opts = partition.opts.lower()
+                        if 'removable' in opts:
+                            drive_type = 2
+                        elif 'fixed' in opts:
+                            drive_type = 3
+                        elif 'remote' in opts:
+                            drive_type = 4
+                        elif 'cdrom' in opts:
+                            drive_type = 5
+                        else:
+                            drive_type = 0
+                            
+                        drives.append((drive, partition.mountpoint, size, drive_type))
                 if drives:
                     return drives
-            except:
-                pass  # WMIC failed, fall back to next method
+            except ImportError:
+                pass  # psutil not available
+            except Exception as e:
+                print(f"psutil method failed: {e}")
+                pass
 
-            # Method 3: Check drive letters directly
+            # Method 3: Direct drive letter checking (fallback)
             import string
             for letter in string.ascii_uppercase:
                 drive = f"{letter}:\\"
@@ -426,6 +465,7 @@ def get_available_drives():
                         label = label_output.split('\n')[0].split()[-1]
                     except:
                         label = ""
+                    
                     # Get size (approximate)
                     try:
                         total_bytes = 0
@@ -439,7 +479,26 @@ def get_available_drives():
                         size = str(total_bytes)
                     except:
                         size = "0"
-                    drives.append((f"{letter}:", label, size))
+                    
+                    # Try to determine drive type
+                    try:
+                        # Use powershell to get drive type
+                        ps_cmd = f"(Get-PSDrive -Name {letter}).Provider.Name"
+                        output = subprocess.check_output(
+                            ['powershell', '-Command', ps_cmd],
+                            stderr=subprocess.DEVNULL,
+                            universal_newlines=True
+                        )
+                        if 'FileSystem' in output:
+                            # For FileSystem drives, we can't easily distinguish fixed vs removable
+                            # without admin rights, so we'll default to showing them
+                            drive_type = 0  # Unknown but accessible
+                        else:
+                            drive_type = 0
+                    except:
+                        drive_type = 0
+                    
+                    drives.append((f"{letter}:", label, size, drive_type))
             
         except Exception as e:
             print(f"Error detecting drives: {str(e)}")
